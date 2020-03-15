@@ -11,9 +11,9 @@ class PythonHandler(BaseHandler):
         try:
             check_call(["bash", "-c", 'which -s python3'])
         except Exception:
-            py_str = "python3"
-        else:
             py_str = "python"
+        else:
+            py_str = "python3"
         exit(run([py_str, code_file]).returncode)
 
     def build(self, code, directory=None):
@@ -29,7 +29,7 @@ class Python2Handler(PythonHandler):
         try:
             check_call(["bash", "-c", 'which -s python2'])
         except Exception:
-            py_str = "python2"
-        else:
             py_str = "python"
+        else:
+            py_str = "python2"
         exit(run([py_str, code_file]).returncode)

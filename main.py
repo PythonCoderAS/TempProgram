@@ -25,7 +25,6 @@ def main(args=None):
     )
     parser.add_argument(
         "--keep",
-        nargs=1,
         type=pathlib.Path,
         metavar="DIRECTORY",
         default=None,
@@ -33,7 +32,6 @@ def main(args=None):
     )
     parser.add_argument(
         "--filename",
-        nargs=1,
         help="Give the stored file the speified name (does not do anything without --keep)",
         default="script",
     )
@@ -58,14 +56,13 @@ def main(args=None):
     for key, value in parsed_dict.items():
         if value:
             parser = handlers["--" + key]
-            break
-    code = sys.stdin.read()
-    if ns.keep:
-        dir = ns.keep
-        os.makedirs(dir, exist_ok=True)
-        parser().build(code, str(dir.joinpath(ns.filename)))
-    else:
-        parser().build(code)
+            code = sys.stdin.read()
+            if ns.keep:
+                dir = ns.keep
+                os.makedirs(dir, exist_ok=True)
+                parser().build(code, str(dir.joinpath(ns.filename)) + "." + key)
+            else:
+                parser().build(code)
 
 
 if __name__ == "__main__":
