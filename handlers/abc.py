@@ -3,7 +3,7 @@ import tempfile
 from os.path import abspath, expanduser, join
 
 
-class BaseHandler(metaclass=abc.ABCMeta):
+class BaseHandler(abc.ABC):
     """Base Handler class that defines abstract methods"""
 
     @property

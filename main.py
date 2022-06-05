@@ -4,19 +4,23 @@ import pathlib
 import sys
 
 from handlers.c import CHandler
-from handlers.python import PythonHandler, Python2Handler
+from handlers.cpp import CPPHandler
+from handlers.java import JavaHandler
+from handlers.python import Python2Handler, PythonHandler
 from handlers.shell import BashShellHandler, ShellHandler, ZshShellHandler
+from util import reverse_dict
 
-handlers = {
-    "--bash": BashShellHandler,
-    "--c": CHandler,
-    "--python": PythonHandler,
-    "--py": PythonHandler,
-    "--py2": Python2Handler,
-    "--python2": Python2Handler,
-    "--sh": ShellHandler,
-    "--zsh": ZshShellHandler,
+handlers_unwrapped = {
+    BashShellHandler: ["--bash"],
+    CHandler: ["--c"],
+    CPPHandler: ["--cpp", "--c++", "--cplusplus"],
+    JavaHandler: ["--java"],
+    PythonHandler: ["--python", "--python3", "--py", "--py3"],
+    Python2Handler: ["--python2", "--py2"],
+    ShellHandler: ["--sh"],
+    ZshShellHandler: ["--zsh"]
 }
+handlers = reverse_dict(handlers_unwrapped)
 
 
 def main(args=None):
@@ -35,13 +39,13 @@ def main(args=None):
         help="Give the stored file the speified name (does not do anything without --keep)",
         default="script",
     )
-    for argname, handler in handlers.items():
+    for handler, argnames in handlers_unwrapped.items():
         parser.add_argument(
-            argname, action="store_true", default=None, help=handler.__doc__
+            *argnames, action="store_true", default=None, help=handler.__doc__
         )
     ns = parser.parse_args(args)
     parsed_dict = {
-        argname.split("-")[-1]: getattr(ns, argname.split("-")[-1])
+        argname.split("-")[-1]: getattr(ns, argname.split("-")[-1], None)
         for argname in handlers.keys()
     }
     parse_count = [bool(val) for name, val in parsed_dict.items()].count(True)
